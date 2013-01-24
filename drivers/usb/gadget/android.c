@@ -885,9 +885,11 @@ static int mass_storage_function_init(struct android_usb_function *f,
 	if (!config)
 		return -ENOMEM;
 
-	config->fsg.nluns = 1;
+	config->fsg.nluns = 2;
 	config->fsg.luns[0].removable = 1;
 	config->fsg.luns[0].cdrom = 0;//mount as device
+	config->fsg.luns[1].removable = 1;
+	config->fsg.luns[1].cdrom = 0;//mount as device
 
 	common = fsg_common_init(NULL, cdev, &config->fsg);
 	if (IS_ERR(common)) {
