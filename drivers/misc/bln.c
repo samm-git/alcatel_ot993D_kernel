@@ -93,11 +93,14 @@ static void disable_led_notification(void)
 	bln_blink_state = 0;
 	bln_ongoing = false;
 
-	if (bln_suspended)
-		bln_disable_backlights();
 
 	if (in_kernel_blink)
 		del_timer(&blink_timer);
+
+	if (bln_suspended)
+		bln_disable_backlights();
+	else /* led keys should be on */
+		bln_enable_backlights();
 
 	wake_unlock(&bln_wake_lock);
 

@@ -18,11 +18,15 @@
 #include <linux/leds.h>
 #include <linux/gpio.h>
 #include <mach/pmic.h>
+#include <linux/bln.h>
 
 #define MAX_KEYPAD_BL_LEVEL	16
 #define KP_BL_LED_GPIO  122
 extern unsigned int fastboot_power_off;
 extern unsigned int fastboot_bklight_off;
+
+
+
 
 void msm_keypad_bl_led_set_fastboot(enum led_brightness value)
 {
@@ -106,6 +110,25 @@ static struct led_classdev msm_kp_bl_led = {
 	.brightness		= LED_OFF,
 };
 
+#ifdef CONFIG_GENERIC_BLN
+static void ot993_touchkey_bln_enable(void)
+{
+	printk(KERN_DEBUG "[TouchKey] enable LED from BLN app\n");
+	msm_keypad_bl_led_set(&msm_kp_bl_led, LED_FULL);
+}
+
+static void ot993_touchkey_bln_disable(void)
+{
+	printk(KERN_DEBUG "[TouchKey] disable LED from BLN app\n");
+	msm_keypad_bl_led_set(&msm_kp_bl_led, LED_OFF);
+}
+
+static struct bln_implementation ot993_touchkey_bln = {
+    .enable = ot993_touchkey_bln_enable,
+    .disable = ot993_touchkey_bln_disable,
+};
+#endif
+
 static int msm_pmic_led_probe(struct platform_device *pdev)
 {
 	int rc;
@@ -140,14 +163,12 @@ static int msm_pmic_led_suspend(struct platform_device *dev,
 		pm_message_t state)
 {
 	led_classdev_suspend(&msm_kp_bl_led);
-
 	return 0;
 }
 
 static int msm_pmic_led_resume(struct platform_device *dev)
 {
 	led_classdev_resume(&msm_kp_bl_led);
-
 	return 0;
 }
 #else
@@ -168,6 +189,9 @@ static struct platform_driver msm_pmic_led_driver = {
 
 static int __init msm_pmic_led_init(void)
 {
+#ifdef CONFIG_GENERIC_BLN
+	register_bln_implementation(&ot993_touchkey_bln);
+#endif
 	return platform_driver_register(&msm_pmic_led_driver);
 }
 module_init(msm_pmic_led_init);
