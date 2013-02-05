@@ -111,21 +111,26 @@ static struct led_classdev msm_kp_bl_led = {
 };
 
 #ifdef CONFIG_GENERIC_BLN
-static void ot993_touchkey_bln_enable(void)
+static int ot993_touchkey_bln_enable(int led_mask)
 {
 	printk(KERN_DEBUG "[TouchKey] enable LED from BLN app\n");
 	msm_keypad_bl_led_set(&msm_kp_bl_led, LED_FULL);
+	return 0;
 }
 
-static void ot993_touchkey_bln_disable(void)
+static int ot993_touchkey_bln_disable(int led_mask)
 {
 	printk(KERN_DEBUG "[TouchKey] disable LED from BLN app\n");
 	msm_keypad_bl_led_set(&msm_kp_bl_led, LED_OFF);
+	return 0;
 }
 
 static struct bln_implementation ot993_touchkey_bln = {
     .enable = ot993_touchkey_bln_enable,
     .disable = ot993_touchkey_bln_disable,
+    .led_count = 1,
+    .power_on = NULL,
+    .power_off = NULL
 };
 #endif
 
