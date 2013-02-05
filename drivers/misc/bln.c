@@ -83,8 +83,8 @@ static void bln_early_suspend(struct early_suspend *h)
 static void bln_late_resume(struct early_suspend *h)
 {
 	bln_suspended = false;
-
 	reset_bln_states();
+	bln_enable_backlights(get_led_mask()); /* always turn on keyb. led on resume */
 }
 
 static struct early_suspend bln_suspend_data = {
