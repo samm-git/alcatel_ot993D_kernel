@@ -1106,6 +1106,8 @@ static int usbdev_notify(struct notifier_block *self,
 	struct usb_device *udev = device;
 	int work = 1;
 	unsigned long flags;
+	
+	pr_info("usbdev_notify: action %lu\n");
 
 	/* Interested in only devices directly connected
 	 * to root hub directly.
@@ -2463,6 +2465,10 @@ static ssize_t otg_mode_write(struct file *file, const char __user *buf,
 	} else if (!memcmp(buf, "peripheral", 10)) {
 		set_bit(B_SESS_VLD, &dev->inputs);
 		set_bit(ID, &dev->inputs);
+		work = 1;
+	} else if (!memcmp(buf, "auto", 4)) { // OT-993D hack
+		dev->inputs = 0x22;
+		dev->pdata->otg_mode = 0;
 		work = 1;
 	} else if (!memcmp(buf, "host", 4)) {
 		clear_bit(B_SESS_VLD, &dev->inputs);
