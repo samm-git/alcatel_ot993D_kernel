@@ -2510,7 +2510,7 @@ static ssize_t otg_info_read(struct file *file, char __user *ubuf,
 			"OTG State:             %s\n"
 			"OTG Mode:              %d\n"
 			"OTG Inputs:            0x%lx\n"
-			"OTG Hack:              1\n",
+			"OTG Hack:              1\n"
 			"Charger Type:          %d\n"
 			"PMIC VBUS Support:     %u\n"
 			"PMIC ID Support:       %u\n"
